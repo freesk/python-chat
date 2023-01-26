@@ -54,13 +54,13 @@ def on_message(data):
 @socketio.on('purge')
 def on_purge(data):
     bot_message = { 
-        'payload': data['username'] + ' has delete all records', 
+        'payload': data['username'] + ' has deleted all records', 
         'id': str(uuid.uuid4()), 
         'bot': True, 
         'author': data['username'], 
         'timestamp': time.time() * 1000  
     }
-    history = []
+    history.clear()
     history.append(bot_message)
     emit('purge', bot_message, broadcast=True)
 
