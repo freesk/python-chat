@@ -34,7 +34,11 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const username = computed(() => store.state.username);
+    const username = computed(() => {
+      if (store.state.username === "null") return null;
+
+      return store.state.username;
+    });
 
     function logout() {
       store.commit("UPDATE_USERNAME", null);

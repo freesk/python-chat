@@ -51,6 +51,20 @@ def on_message(data):
     emit('message', data, broadcast=True)
     history.append(data) 
 
+@socketio.on('purge')
+def on_purge(data):
+    bot_message = { 
+        'payload': data['username'] + ' has delete all records', 
+        'id': str(uuid.uuid4()), 
+        'bot': True, 
+        'author': data['username'], 
+        'timestamp': time.time() * 1000  
+    }
+    history = []
+    history.append(bot_message)
+    emit('purge', bot_message, broadcast=True)
+
+
 # port 5000 is not working on mac because of Air Play!
 if __name__ == "__main__":
     app.run(port=4000)

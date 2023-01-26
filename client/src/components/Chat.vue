@@ -39,10 +39,16 @@
         class="mr-8"
       />
       <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
         @click="submit"
       >
         SUBMIT
+      </button>
+      <button
+        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        @click="purge"
+      >
+        PURGE
       </button>
     </div>
   </div>
@@ -88,8 +94,8 @@ export default defineComponent({
       messages.value = [...messages.value, data];
     });
 
-    socket.on("disconnect", () => {
-      console.log(`disconnected`);
+    socket.on("purge", (data) => {
+      messages.value = [data];
     });
 
     function submit() {
@@ -101,7 +107,14 @@ export default defineComponent({
       message.value = null;
     }
 
+    function purge() {
+      socket.emit("purge", {
+        username: username.value,
+      });
+    }
+
     return {
+      purge,
       submit,
       message,
       sorted,
