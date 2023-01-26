@@ -12,6 +12,7 @@
     "axios": "^1.2.4",
     "core-js": "^3.8.3",
     "js-cookie": "^3.0.1",
+    "moment": "^2.29.4",
     "postcss": "^8",
     "socket.io-client": "^4.5.4",
     "tailwindcss": "^3",

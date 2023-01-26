@@ -3,26 +3,29 @@
     <div class="flex-col flex" style="max-height: 500px; overflow-y: auto">
       <p
         :style="
-          message.author === username
+          message.bot
+            ? 'align-self: center; text-align: center;'
+            : message.author === username
             ? 'align-self: start; text-align: left;'
             : 'align-self: end;  text-align: right;'
         "
         v-for="message in sorted"
         :key="message.id"
+        class="mt-2 p-2"
+        :class="message.bot ? 'bg-yellow-200' : null"
       >
         <template v-if="message.author === username">
-          <span class="text-gray-500 text-sm">{{
-            new Date(message.timestamp).toISOString()
-          }}</span>
+          <span class="text-gray-500 text-sm">{{ message.postedAt }}</span>
           <br />
-          <span class="text-gray-700 text-base">
+          <span class="text-gray-700 text-base" v-if="!message.bot">
             You: {{ message.payload }}
+          </span>
+          <span v-else class="text-gray-700 text-base">
+            {{ message.payload }}
           </span>
         </template>
         <template v-else>
-          <span class="text-gray-500 text-sm">{{
-            new Date(message.timestamp).toISOString()
-          }}</span>
+          <span class="text-gray-500 text-sm">{{ message.postedAt }}</span>
           <br />
           <span class="text-gray-700 text-base">
             {{ message.author }}: {{ message.payload }}
@@ -51,7 +54,7 @@
 <script>
 import { io } from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-
+import moment from "moment";
 import { defineComponent, ref, computed } from "vue";
 import { useStore } from "vuex";
 
@@ -63,20 +66,24 @@ export default defineComponent({
     const message = ref(null);
     const messages = ref([]);
     const sorted = computed(() =>
-      [...messages.value].sort((a, b) => b.timestamp - a.timestamp)
+      [...messages.value]
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .map((message) => ({
+          ...message,
+          postedAt: moment(message.timestamp).format("llll"),
+        }))
     );
 
-    const socket = io("127.0.0.1:5000");
+    const socket = io("127.0.0.1:4000");
 
     socket.on("connect", () => {
-      socket.emit("message", {
-        payload: `${username.value} has joined the chat`,
-        id: uuidv4(),
-        author: username.value,
+      socket.emit("join", {
+        username: username.value,
       });
     });
 
     socket.on("join", (data) => {
+      console.log("join data", data);
       messages.value = [...data, ...messages.value];
     });
 
