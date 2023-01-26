@@ -14,23 +14,20 @@
         class="mt-2 p-2"
         :class="message.bot ? 'bg-yellow-200' : null"
       >
-        <template v-if="message.author === username">
-          <span class="text-gray-500 text-sm">{{ message.postedAt }}</span>
-          <br />
-          <span class="text-gray-700 text-base" v-if="!message.bot">
-            You: {{ message.payload }}
-          </span>
-          <span v-else class="text-gray-700 text-base">
-            {{ message.payload }}
-          </span>
-        </template>
-        <template v-else>
-          <span class="text-gray-500 text-sm">{{ message.postedAt }}</span>
-          <br />
-          <span class="text-gray-700 text-base">
-            {{ message.author }}: {{ message.payload }}
-          </span>
-        </template>
+        <span class="text-gray-500 text-sm">{{ message.postedAt }}</span>
+        <br />
+        <span class="text-gray-700 text-base" v-if="message.bot">
+          {{ message.payload }}
+        </span>
+        <span
+          class="text-gray-700 text-base"
+          v-else-if="message.author === username"
+        >
+          You: {{ message.payload }}
+        </span>
+        <span class="text-gray-700 text-base" v-else>
+          {{ message.author }}: {{ message.payload }}
+        </span>
       </p>
     </div>
     <div class="mt-8 flex items-center justify-center">
